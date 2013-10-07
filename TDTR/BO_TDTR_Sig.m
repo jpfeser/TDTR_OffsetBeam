@@ -3,11 +3,11 @@
 %tdelay is COLUMN vector of desired delay times
 %Mvect (the fourier components) are ROW vectors
 %Matrices have size, length(tdelay) x length(Mvect)
-function [deltaR,ratio]=TDTR_REFL_DOUGHNUT_V2(tdelay,SysParam,EXTRA)
+function [deltaR,ratio]=BO_TDTR_Sig(tdelay,SysParam,EXTRA)
 
 lambda=SysParam.lambda;
 C=SysParam.C;
-t=SysParam.t;
+h=SysParam.h;
 r_probe=SysParam.r_probe;
 r_pump=SysParam.r_pump;
 eta=SysParam.eta;
@@ -28,8 +28,8 @@ dT1=zeros(1,length(mvect))';
 dT2=zeros(1,length(mvect))';
 kmax=1/sqrt(r_pump^2+r_probe^2)*2;
 
-    dT1=rombint_VV3(@(kvect) TDTR_TEMP_DOUGHNUT_V1(kvect,mvect/tau_rep+f,lambda,C,t,eta,r_pump,r_probe,A_pump,EXTRA),0,kmax,length(mvect));
-    dT2=rombint_VV3(@(kvect) TDTR_TEMP_DOUGHNUT_V1(kvect,mvect/tau_rep-f,lambda,C,t,eta,r_pump,r_probe,A_pump,EXTRA),0,kmax,length(mvect));
+    dT1=rombint_multi(@(kvect) BO_TDTR_TEMP(kvect,mvect/tau_rep+f,lambda,C,h,eta,r_pump,r_probe,A_pump,EXTRA),0,kmax,length(mvect));
+    dT2=rombint_multi(@(kvect) BO_TDTR_TEMP(kvect,mvect/tau_rep-f,lambda,C,h,eta,r_pump,r_probe,A_pump,EXTRA),0,kmax,length(mvect));
     
 expterm=exp(ii*2*pi/tau_rep*(tdelay*mvect));
 Retemp=(ones(length(tdelay),1)*(dT1'.*fudge1+dT2'.*fudge2)).*expterm;

@@ -1,4 +1,5 @@
-function p=OffcenterBeam
+function p = BO_TDTR_GetPolyCoefs
+
 Nmax = 40; %number of polynomials
 Kmax = 2*Nmax+2;
 

@@ -14,7 +14,7 @@
 %r_probe: Probe spot size (m)
 %A_pump: Pump power (W), used to ESTIMATE amplitude (not used for fitting)
 
-function Integrand=TDTR_TEMP_DOUGHNUT_V1(kvectin,freq,lambda,C,t,eta,r_pump,r_probe,A_pump,EXTRA)
+function Integrand=BO_TDTR_TEMP(kvectin,freq,lambda,C,t,eta,r_pump,r_probe,A_pump,xoffset)
 
 Nfreq=length(freq);
 kvect=kvectin(:)*ones(1,Nfreq);
@@ -61,13 +61,7 @@ end
 
 G=(Bplus+Bminus)./(Bminus-Bplus)./gamman; %The layer G(k)
 P=A_pump*exp(-pi^2*r_pump^2/2*kvect.^2);
-
-%S=besselj(0,2*pi*r_probe*kvect); %Dirac ring
-xo=EXTRA;
-S = GetHankel_OffsetBeam(kvect,xo,r_probe,1);
-%S=exp(-pi^2*r_probe^2/2.*kvect.^2); %Normal Gaussian Probe
-%S=(1-pi^2.*(kvect.^2)*r_probe^2).*exp(-pi^2*r_probe^2*kvect.^2); %The Gaussian Doughnut.  Yum
-%S=1/(pi*(a^2-b^2))*(a*BesselJ(1,2*pi*a*kvect)./kvect-b*BesselJ(1,2*pi*b*kvect)./kvect);
+S = BO_TDTR_GetSHankel(kvect,xoffset,r_probe,1);
 
 Integrand=G.*P.*S.*kvect; %The rest of the integrand
 
